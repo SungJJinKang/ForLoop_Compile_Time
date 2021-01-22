@@ -1,6 +1,8 @@
 # ForLoop_Compile_Time
 C++ Compile Time For Loop.
+
 And Support iterate enum value.
+
 You can evaluate loop variable at compile time!! ( Look Third Function in HOW TO USE  )
 
 ## Feature
@@ -12,7 +14,9 @@ You can evaluate loop variable at compile time!! ( Look Third Function in HOW TO
 
 
 
-WARNING : You can use only integer point and enum (enum class) as Loop variable type ( floating type isn't decided at compile time on C++17, maybe C++20 support this)
+WARNING : 
+
+You can use only integer point and enum (enum class) as Loop variable type ( floating type isn't decided at compile time on C++17, maybe C++20 support this)
 
 ```
 1.
