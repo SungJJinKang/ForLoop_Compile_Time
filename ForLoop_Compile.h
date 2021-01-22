@@ -5,56 +5,34 @@
 /// <summary>
 /// loop from start(inclusive) to end(inclusive)
 /// </summary>
-template <int start, int end>
-struct ForLoop_Compile
+template <typename T, std::enable_if_t<std::is_integral_v<T> || std::is_enum_v<T>, bool> = true>
+struct ForLoop_Compile_T
 {
-	static_assert(start <= end, "end must be greater than start");
-	
-	/// <summary>
-	/// Just Loop Job
-	/// </summary>
-	/// <param name="job"></param>
-	static void Loop(const std::function<void()>& job)
+	template <T start, T end, T increment, typename F, typename... Args >
+	static void Loop(F && f, Args&&... args)
 	{
-		job();
+		static_assert(start <= end, "end must be greater than start");
+		std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
 
-		if constexpr (start < end)
+		if constexpr (start + increment <= end)
 		{
-			ForLoop_Compile<start + 1, end>::Loop(job);
+			Loop<start + increment, end, increment>(std::forward<F>(f), std::forward<Args>(args)...);
 		}
 	}
 
-	/// <summary>
-	/// For Use loop value(start ~ end).
-	/// 
-	/// Loop variable must be at first function argument
-	/// And Never put reference to loop variable
-	/// 
-	/// You Can't change value of loop varaible at inside of loop function
-	/// 
-	/// 
-	/// Example)
-	/// 
-	/// void addLoop(int loop, int initialValue)
-	/// {
-	/// 	initialValue += loop;
-	/// }
-	/// </summary>
-	/// <typeparam name="F"></typeparam>
-	/// <typeparam name="...Args"></typeparam>
-	/// <param name="f"></param>
-	/// <param name="...args"></param>
-	template <typename F, typename... Args, std::enable_if_t<std::is_function_v< std::remove_reference_t<F> >, bool> = true>
-	static void Loop(F&& f, Args&&... args)
+	template <T start, T end, T increment, typename F, typename... Args >
+	static void LoopWithLoopVariable(F&& f, Args&&... args)
 	{
+		static_assert(start <= end, "end must be greater than start");
 		std::invoke(std::forward<F>(f), start, std::forward<Args>(args)...);
 
-		if constexpr (start < end)
+		if constexpr (start + increment <= end)
 		{
-			ForLoop_Compile<start + 1, end>::Loop(std::forward<F>(f), std::forward<Args>(args)...);
+			LoopWithLoopVariable<start + increment, end, increment>(std::forward<F>(f), std::forward<Args>(args)...);
 		}
 	}
-	
-	
-	
+
 };
+
+using ForLoop_Compile = typename ForLoop_Compile_T<int>;
+using ForLoop_Compile_UnsignedInt = typename ForLoop_Compile_T<unsigned int>;
