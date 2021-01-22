@@ -103,7 +103,7 @@ int main()
 template <int value>
 constexpr void PrintSquare(int additional)
 {
-	constexpr int result = value * value; // result is evaluated at compile time
+	constexpr int result = value * value; // result is evaluated at compile time ( i know this function is weird, useless. this is just example )
 	std::cout << result + additional << std::endl;
 }
 
