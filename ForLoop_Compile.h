@@ -3,19 +3,18 @@
 #include <utility>
 #include <type_traits>
 
-template <typename LoopVariableType, typename DUMMY = void> struct ForLoop_Compile_T;
+template <typename LoopVariableType, typename DUMMY = void> struct ForLoop_CompileTime;
 
 /// <summary>
 /// if Loop variable is integer type
 /// loop from start(inclusive) to end(inclusive)
 /// </summary>
 template <typename LoopVariableType>
-struct ForLoop_Compile_T<typename LoopVariableType, std::enable_if_t<std::is_integral_v<LoopVariableType>> >
+struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_integral_v<LoopVariableType>> >
 {
 	template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, typename F, typename... Args, std::enable_if_t<start <= end, bool> = true >
 	static void Loop(F && f, Args&&... args)
 	{
-		static_assert(start <= end, "end must be greater than start");
 		std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
 
 		if constexpr (start + increment <= end)
@@ -27,12 +26,22 @@ struct ForLoop_Compile_T<typename LoopVariableType, std::enable_if_t<std::is_int
 	template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, typename F, typename... Args, std::enable_if_t<start <= end, bool> = true  >
 	static void LoopWithLoopVariable(F&& f, Args&&... args)
 	{
-		static_assert(start <= end, "end must be greater than start");
 		std::invoke(std::forward<F>(f), start, std::forward<Args>(args)...);
 
 		if constexpr (start + increment <= end)
 		{
 			LoopWithLoopVariable<start + increment, end, increment>(std::forward<F>(f), std::forward<Args>(args)...);
+		}
+	}
+
+	template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, template<LoopVariableType> typename Functor, std::enable_if_t<start <= end, bool> = true >
+	static void LoopWithLoopVariable()
+	{
+		Functor<start>()();
+
+		if constexpr (start + increment <= end)
+		{
+			LoopWithLoopVariable<start + increment, end, increment, Functor>();
 		}
 	}
 };
@@ -43,7 +52,7 @@ struct ForLoop_Compile_T<typename LoopVariableType, std::enable_if_t<std::is_int
 /// </summary>
 /// <typeparam name="T"></typeparam>
 template <typename LoopVariableType>
-struct ForLoop_Compile_T<typename LoopVariableType, std::enable_if_t<std::is_enum_v<LoopVariableType>> >
+struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_enum_v<LoopVariableType>> >
 {
 	using enum_underlying_type = std::underlying_type_t<LoopVariableType>;
 
@@ -68,8 +77,19 @@ struct ForLoop_Compile_T<typename LoopVariableType, std::enable_if_t<std::is_enu
 			LoopWithLoopVariable< static_cast<LoopVariableType>( static_cast<enum_underlying_type>(start) + increment ), end, increment>(std::forward<F>(f), std::forward<Args>(args)...);
 		}
 	}
+
+	template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, template<LoopVariableType> typename Functor, std::enable_if_t<start <= end, bool> = true >
+	static void LoopWithLoopVariable()
+	{
+		Functor<start>()();
+
+		if constexpr (static_cast<enum_underlying_type>(start) + increment <= static_cast<enum_underlying_type>(end))
+		{
+			LoopWithLoopVariable<static_cast<LoopVariableType>(static_cast<enum_underlying_type>(start) + increment), end, increment, Functor>();
+		}
+	}
 };
 
 
-using ForLoop_Compile = typename ForLoop_Compile_T<int>;
-using ForLoop_Compile_UnsignedInt = typename ForLoop_Compile_T<unsigned int>;
+using ForLoop_CompileTime_Int = typename ForLoop_CompileTime<int>;
+using ForLoop_CompileTime_UnsignedInt = typename ForLoop_CompileTime<unsigned int>;
