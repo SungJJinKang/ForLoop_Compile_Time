@@ -2,13 +2,17 @@
 #include <functional>
 #include <utility>
 #include <type_traits>
+
+template <typename LoopVariableType, typename DUMMY = void> struct ForLoop_Compile_T;
+
 /// <summary>
+/// if Loop variable is integer type
 /// loop from start(inclusive) to end(inclusive)
 /// </summary>
-template <typename T, std::enable_if_t<std::is_integral_v<T> || std::is_enum_v<T>, bool> = true>
-struct ForLoop_Compile_T
+template <typename LoopVariableType>
+struct ForLoop_Compile_T<typename LoopVariableType, std::enable_if_t<std::is_integral_v<LoopVariableType>> >
 {
-	template <T start, T end, T increment, typename F, typename... Args >
+	template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, typename F, typename... Args, std::enable_if_t<start <= end, bool> = true >
 	static void Loop(F && f, Args&&... args)
 	{
 		static_assert(start <= end, "end must be greater than start");
@@ -20,7 +24,7 @@ struct ForLoop_Compile_T
 		}
 	}
 
-	template <T start, T end, T increment, typename F, typename... Args >
+	template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, typename F, typename... Args, std::enable_if_t<start <= end, bool> = true  >
 	static void LoopWithLoopVariable(F&& f, Args&&... args)
 	{
 		static_assert(start <= end, "end must be greater than start");
@@ -31,8 +35,41 @@ struct ForLoop_Compile_T
 			LoopWithLoopVariable<start + increment, end, increment>(std::forward<F>(f), std::forward<Args>(args)...);
 		}
 	}
-
 };
+
+
+/// <summary>
+/// if Loop variable is enum or enum class type
+/// </summary>
+/// <typeparam name="T"></typeparam>
+template <typename LoopVariableType>
+struct ForLoop_Compile_T<typename LoopVariableType, std::enable_if_t<std::is_enum_v<LoopVariableType>> >
+{
+	using enum_underlying_type = std::underlying_type_t<LoopVariableType>;
+
+	template <LoopVariableType start, LoopVariableType end, int increment, typename F, typename... Args, std::enable_if_t<start <= end, bool> = true  >
+	static void Loop(F&& f, Args&&... args)
+	{
+		std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
+
+		if constexpr (static_cast<enum_underlying_type>(start) + increment <= static_cast<enum_underlying_type>(end) )
+		{
+			Loop<start + increment, end, increment>(std::forward<F>(f), std::forward<Args>(args)...);
+		}
+	}
+
+	template <LoopVariableType start, LoopVariableType end, int increment, typename F, typename... Args, std::enable_if_t<start <= end, bool> = true  >
+	static void LoopWithLoopVariable(F&& f, Args&&... args)
+	{
+		std::invoke(std::forward<F>(f), start, std::forward<Args>(args)...);
+
+		if constexpr (static_cast<enum_underlying_type>(start) + increment <= static_cast<enum_underlying_type>(end) )
+		{
+			LoopWithLoopVariable< static_cast<LoopVariableType>( static_cast<enum_underlying_type>(start) + increment ), end, increment>(std::forward<F>(f), std::forward<Args>(args)...);
+		}
+	}
+};
+
 
 using ForLoop_Compile = typename ForLoop_Compile_T<int>;
 using ForLoop_Compile_UnsignedInt = typename ForLoop_Compile_T<unsigned int>;
