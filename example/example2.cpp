@@ -2,10 +2,10 @@
 #include "../ForLoop_Compile.h"
 
 template <int value>
-constexpr void PrintSquare()
+constexpr void PrintSquare(int additional)
 {
-	constexpr int result = value * value; // This value is evaluated at compile time
-	std::cout << result << std::endl;
+	constexpr int result = value * value; // result is evaluated at compile time
+	std::cout << result + additional << std::endl;
 }
 
 // Loop Job Functor must have non type template argument to get Loop Variable value at compile time
@@ -13,13 +13,13 @@ constexpr void PrintSquare()
 template<int loopVariable>
 struct LoopJobFunctor
 {
-	constexpr void operator()()
+	constexpr void operator()(int additional)
 	{
-		PrintSquare<loopVariable>();
+		PrintSquare<loopVariable>(additional);
 	}
 };
 
 int main()
 {
-	ForLoop_CompileTime_Int::LoopWithLoopVariable<0, 10, 1, LoopJobFunctor>();
+	ForLoop_CompileTime_Int::LoopWithLoopVariable<0, 10, 1, LoopJobFunctor>(2);
 }
