@@ -16,14 +16,14 @@ WARNING : You can use only integer point and enum (enum class) as Loop variable 
 
 ```
 1.
-template \<LoopVariableType start, LoopVariableType end, LoopVariableType increment, typename F, typename... Args, std::enable_if_t\<start \<= end, bool\> = true \>
+template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, typename F, typename... Args, std::enable_if_t<start <= end, bool> = true >
 static void Loop(F && f, Args&&... args)
 
 : Execute Function for Iterating from start to end 
 
 
 2.
-template \<LoopVariableType start, LoopVariableType end, LoopVariableType increment, typename F, typename... Args, std::enable_if_t\<start \<= end, bool\> = true  \>
+template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, typename F, typename... Args, std::enable_if_t<start <= end, bool> = true >
 static void LoopWithLoopVariable(F&& f, Args&&... args)
 
 : Execute Function ( should have loop variable as first parameter ) for Iterating from start to end 
@@ -50,6 +50,7 @@ void addLoop(int loop, int initialValue)
 	std::cout << initialValue + loop << std::endl;
 }
 
+int main()
 {
 	int a = 0;
 	ForLoop_CompileTime_Int::Loop<1, 5, 2>([&a]() { a += 1; std::cout << a << std::endl;  }); // output : 1, 2, 3
@@ -69,11 +70,12 @@ enum class TestEnum : unsigned int
 	Drive
 };
 
+int main()
 {
 	ForLoop_CompileTime<TestEnum>::LoopWithLoopVariable<TestEnum::Apple, TestEnum::Drive, 2>([](TestEnum loopVariable)
+	{
+		switch (loopVariable)
 		{
-			switch (loopVariable)
-			{
 			case TestEnum::Apple:
 				std::cout << "Apple" << std::endl;
 				break;
@@ -86,8 +88,8 @@ enum class TestEnum : unsigned int
 			case TestEnum::Drive:
 				std::cout << "Driving" << std::endl;
 				break;
-			}
 		}
+	}
 	); // output : Apple, Your Car is nice
 }
 ```
