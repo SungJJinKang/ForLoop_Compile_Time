@@ -8,10 +8,11 @@ C++ Compile Time For Loop.
   
 ## HOW TO USE
 
-Loop from start(inclusive) to end(inclusive)
+Loop from start(inclusive) to end(*inclusive*)
 
-If you want loop value is int type, Use ForLoop_Compile::Loop, LoopWithLoopVariable
-otherwise Use ForLoop_Compile_T<LoopVariableType>::Loop, LoopWithLoopVariable ( example ForLoop_Compile_T<Enum>... )
+If you want loop value is int type, **Use ForLoop_Compile::Loop, ForLoop_Compile::LoopWithLoopVariable**,
+
+Otherwise **Use ForLoop_Compile_T\<LoopVariableType\>::Loop, ForLoop_Compile_T\<LoopVariableType\>::LoopWithLoopVariable** ( example ForLoop_Compile_T\<Enum\>... )
 
 WARNING : You can use only integer point and enum (enum class) as Loop variable type ( floating type isn't decided at compile time on C++17, maybe C++20 support this)
 
@@ -21,6 +22,7 @@ ForLoop_Compile::Loop<start, end, increment>(Function, ...));
 
 : Execute Function for Iterating from start to end 
 
+
 2.
 ForLoop_Compile::LoopWithLoopVariable<start, end, increment>(Function, ...)) 
 
@@ -29,8 +31,8 @@ ForLoop_Compile::LoopWithLoopVariable<start, end, increment>(Function, ...))
 
 ```
 
-
-```
+### Iterate for integer type
+```c++
 void add10(int& a)
 {
 	std::cout << a + 10 << std::endl;
@@ -50,7 +52,8 @@ void addLoop(int loop, int initialValue)
 }
 ```
 
-```
+### Iterate for enum type
+```c++
 enum class TestEnum : unsigned int
 {
 	Apple,
