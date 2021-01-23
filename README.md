@@ -10,38 +10,13 @@ You can evaluate loop variable at compile time!! ( Look Third Function in HOW TO
   * Easy Use
   * Support Enum Iterate
   * Many Example Codes
+  
 ## HOW TO USE
 
+You can use only integer point and enum (enum class) as Loop variable type ( floating type isn't supported on C++17, maybe C++20 support this)
 
 
-WARNING : 
-
-You can use only integer point and enum (enum class) as Loop variable type ( floating type isn't decided at compile time on C++17, maybe C++20 support this)
-
-```
-1.
-template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, typename F, typename... Args, std::enable_if_t<start <= end, bool> = true >
-static void Loop(F && f, Args&&... args)
-
-: Execute Function for Iterating from start to end 
-
-
-2.
-template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, typename F, typename... Args, std::enable_if_t<start <= end, bool> = true >
-static void LoopWithLoopVariable(F&& f, Args&&... args)
-
-: Execute Function ( should have loop variable as first parameter ) for Iterating from start to end 
-  Function parameter of LoopWithLoopVariable must have LoopVariableType variable as first function parameter
-
-3.
-template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, template<LoopVariableType> typename Functor>
-static void LoopWithLoopVariable()
-
-: If You need using Loop Variable evaluated at compile time In Your Loop Job, Use This Function
-  You need Template Functor To Use this function
-
-```
-### Using Loop Variable Evaluated at compile time In Loop Job
+### Using with Enum Type
 ```c++
 enum EnumTest
 {
@@ -93,4 +68,22 @@ int main()
 }
 ```
 
+### Using with IntegerType
+```c++
 
+// Loop Job Functor must have non type template argument to get Loop Variable value at compile time
+// And type of non type template argument should equal to Template argument of ForLoop_CompileTime
+template<int loopedValuee>
+struct LoopJobFunctor
+{
+	constexpr void operator()()
+	{
+		SomethingFunction<loopedValuee>();
+	}
+};
+
+int main()
+{
+	ForLoop_CompileTime<int>::Loop<0, 20, 2, LoopJobFunctor>();
+}
+```
