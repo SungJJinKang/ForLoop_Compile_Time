@@ -29,6 +29,15 @@ void Function()
 	~~~~~~~
 }
 
+template<>
+void Function<EnumTest::B>(){}
+
+template<>
+void Function<EnumTest::I>(){}
+
+template<>
+void Function<EnumTest::O>(){}
+
 // Loop Job Functor must have non type template argument to get Loop Variable value at compile time
 // And type of non type template argument should equal to Template argument of ForLoop_CompileTime
 template<EnumTest enumValue>
