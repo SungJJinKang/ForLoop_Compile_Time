@@ -41,6 +41,9 @@ struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_e
 
 		if constexpr (static_cast<enum_underlying_type>(start) + increment <= static_cast<enum_underlying_type>(end))
 		{
+			//TODO : If args have rvalue reference, it is already moved at Functor<start>()(std::forward<Args>(args)...);
+			//TODO : but at here, This code trying pass rvalue already moved
+			//TODO : If loop is stared, args should be 
 			Loop<static_cast<LoopVariableType>(static_cast<enum_underlying_type>(start) + increment), end, increment, Functor>(std::forward<Args>(args)...);
 		}
 	}
