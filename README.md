@@ -1,6 +1,8 @@
 # ForLoop_Compile_Time
 C++ Compile Time For Loop.
 
+You can use this libary to call iteratelly template function with non type template argument
+
 And Support iterate enum value.
 
 You can evaluate loop variable at compile time!! ( Look Third Function in HOW TO USE  )
