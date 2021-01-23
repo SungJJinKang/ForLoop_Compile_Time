@@ -43,12 +43,12 @@ static void LoopWithLoopVariable()
 ```
 ### Using Loop Variable Evaluated at compile time In Loop Job
 ```c++
-enum EnumExample
+enum EnumTest
 {
 	A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P
 }
 
-template<EnumExample enumValue>
+template<EnumTest enumValue>
 void Function()
 {
 	~~~~~~~
@@ -56,7 +56,7 @@ void Function()
 
 // Loop Job Functor must have non type template argument to get Loop Variable value at compile time
 // And type of non type template argument should equal to Template argument of ForLoop_CompileTime
-template<EnumExample enumValue>
+template<EnumTest enumValue>
 struct LoopJobFunctor
 {
 	constexpr void operator()()
@@ -67,7 +67,7 @@ struct LoopJobFunctor
 
 int main()
 {
-	ForLoop_CompileTime<EnumExample>::LoopWithLoopVariable<EnumExample::A, EnumExample::P, 1, LoopJobFunctor>();
+	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::P, 1, LoopJobFunctor>();
 	
 	/* 
 	
@@ -79,14 +79,14 @@ int main()
 	
 	or You Should Do this
 	
-	Function<EnumExample::A>();
-	Function<EnumExample::B>();
-	Function<EnumExample::C>();
-	Function<EnumExample::D>();
-	Function<EnumExample::E>();
-	Function<EnumExample::F>();
-	Function<EnumExample::G>();
-	Function<EnumExample::H>();
+	Function<EnumTest::A>();
+	Function<EnumTest::B>();
+	Function<EnumTest::C>();
+	Function<EnumTest::D>();
+	Function<EnumTest::E>();
+	Function<EnumTest::F>();
+	Function<EnumTest::G>();
+	Function<EnumTest::H>();
 	.....
 	
 	*/
