@@ -5,6 +5,9 @@
 
 template <typename LoopVariableType, typename DUMMY = void> struct ForLoop_CompileTime;
 
+template <typename T>
+using if_rvalue_reference_change_to_lvalue_reference = std::conditional_t<!std::is_reference_v<T>, T, std::conditional_t<std::is_lvalue_reference_v<T>, T, std::add_lvalue_reference_t<T>>>;
+
 /// <summary>
 /// if Loop variable is integer type
 /// loop from start(inclusive) to end(inclusive)
@@ -15,7 +18,7 @@ struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_i
 	template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, template<LoopVariableType> typename Functor, typename... Args, std::enable_if_t<start <= end, bool> = true >
 	static void Loop(Args&&... args)
 	{
-		Functor<start>()(std::forward<Args>(args)...);
+		Functor<start>()(std::forward<if_rvalue_reference_change_to_lvalue_reference<Args>>(args)...);
 
 		if constexpr (start + increment <= end)
 		{
@@ -37,13 +40,10 @@ struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_e
 	template <LoopVariableType start, LoopVariableType end, typename enum_underlying_type increment, template<LoopVariableType> typename Functor, typename... Args, std::enable_if_t<start <= end, bool> = true >
 	static void Loop(Args&&... args)
 	{
-		Functor<start>()(std::forward<Args>(args)...);
+		Functor<start>()(std::forward<if_rvalue_reference_change_to_lvalue_reference<Args>>(args)...);
 
 		if constexpr (static_cast<enum_underlying_type>(start) + increment <= static_cast<enum_underlying_type>(end))
 		{
-			//TODO : If args have rvalue reference, it is already moved at Functor<start>()(std::forward<Args>(args)...);
-			//TODO : but at here, This code trying pass rvalue already moved
-			//TODO : If loop is stared, args should be 
 			Loop<static_cast<LoopVariableType>(static_cast<enum_underlying_type>(start) + increment), end, increment, Functor>(std::forward<Args>(args)...);
 		}
 	}
