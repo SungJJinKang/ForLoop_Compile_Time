@@ -10,6 +10,7 @@ You can evaluate loop variable at compile time!! ( Look Third Function in HOW TO
 ## Feature
   * C++ 17
   * Easy Use
+  * Head Only
   * Support Enum Iterate
   * Many Example Codes
   
@@ -42,6 +43,7 @@ void Function<EnumTest::O>(){}
 
 // Loop Job Functor must have non type template argument to get Loop Variable value at compile time
 // And type of non type template argument should equal to Template argument of ForLoop_CompileTime
+// C++20 Will Template Lambda, then Yoy will not need this
 template<EnumTest enumValue>
 struct LoopJobFunctor
 {
@@ -53,6 +55,7 @@ struct LoopJobFunctor
 
 int main()
 {
+	//ForLoop_CompileTime<EnumTest>::Loop<Loop Start (inclusive), Loop End (inclusive), Increment Value, LoopJobFunctor>();
 	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::P, 1, LoopJobFunctor>();
 	
 	/* 
