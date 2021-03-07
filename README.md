@@ -3,7 +3,7 @@ C++ Compile Time For Loop.
 
 You can use this libary to call iteratelly template function with non type template argument
 
-And Support iterate enum value.
+And Support using enum value as iterate value.
 
 You can evaluate loop variable at compile time!! ( Look Third Function in HOW TO USE  )
 
@@ -11,12 +11,19 @@ You can evaluate loop variable at compile time!! ( Look Third Function in HOW TO
   * C++ 17
   * Easy Use
   * Head Only
-  * Support Enum Iterate
+  * Support Using Enum or Enum class as Iterate value
+  * Support Increment value ( maybe std::integer_sequence doesn't support this )
   * Many Example Codes
+  
   
 ## HOW TO USE
 
-You can use only integer point and enum (enum class) as Loop variable type ( floating type isn't supported on C++17, maybe C++20 support this)
+Make Functor ( See example ).   
+Use ForLoop_CompileTime<EnumTest>::Loop<Loop Start (inclusive), Loop End (inclusive), Increment Value, LoopJobFunctor>();     
+(Maybe C++20 will support template lambda, Then you don't need to make Functior)     
+	
+You can use only integer point and enum (enum class) as Loop variable type ( floating type isn't supported on C++17, maybe C++20 support this)     
+( passing rvalue reference is undefined behaviour, i'll fix it )
 
 
 ### Using with Enum Type
