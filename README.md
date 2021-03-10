@@ -5,7 +5,7 @@ You can use this libary to call iteratelly template function with non type templ
 
 And Support using enum value as iterate value.
 
-You can evaluate loop variable at compile time!! ( Look Third Function in HOW TO USE  )
+You can evaluate loop variable at compile time!!        
 
 ## Feature
   * C++ 17
@@ -19,8 +19,19 @@ You can evaluate loop variable at compile time!! ( Look Third Function in HOW TO
 ## HOW TO USE
 
 Make Functor ( See example ).   
-Use ForLoop_CompileTime<EnumTest>::Loop<Loop Start (inclusive), Loop End (inclusive), Increment Value, LoopJobFunctor>();     
+Use ForLoop_CompileTime<EnumTest>::Loop<Loop Start (inclusive), Loop End (inclusive), eCondition_OperatorType ( condition operator type ), Increment Value, LoopJobFunctor>();     
 (Maybe C++20 will support template lambda, Then you don't need to make Functior)     
+
+```
+Condition operator types ( eCondition_OperatorType ) :         
+
+Eqaul,     
+NotEqual,    
+SmallerThan,     
+SmallerThanOrEqual,     
+BiggerThan,      
+BIggerThanOrEqual      
+```
 	
 You can use only integer point and enum (enum class) as Loop variable type ( floating type isn't supported on C++17, maybe C++20 support this)     
 ( passing rvalue reference is undefined behaviour, i'll fix it )
@@ -62,15 +73,15 @@ struct LoopJobFunctor
 
 int main()
 {
-	//ForLoop_CompileTime<EnumTest>::Loop<Loop Start (inclusive), Loop End (inclusive), Increment Value, LoopJobFunctor>();
-	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::P, 1, LoopJobFunctor>();
+	//ForLoop_CompileTime<EnumTest>::Loop<Loop Start (inclusive), Loop End (inclusive), eCondition_OperatorType ( condition operator type ), Increment Value, LoopJobFunctor>();
+	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::N, eCondition_OperatorType::SmallerThanOrEqual, 1, LoopJobFunctor>();
 	
 	/* 
 	
 	You Can't do this
 	for (EnumTest i = EnumTest::A; i <= EnumTest::N; i = static_cast<EnumTest>( static_cast<int>(i) + 1 ) )
 	{
-		Function<i>();
+		Function<i>(); // template parameter should be defined at compile-time
 	}
 	
 	or You Should Do this
@@ -83,6 +94,12 @@ int main()
 	Function<EnumTest::F>();
 	Function<EnumTest::G>();
 	Function<EnumTest::H>();
+	Function<EnumTest::I>();
+	Function<EnumTest::J>();
+	Function<EnumTest::K>();
+	Function<EnumTest::L>();
+	Function<EnumTest::M>();
+	Function<EnumTest::N>();
 	.....
 	
 	*/

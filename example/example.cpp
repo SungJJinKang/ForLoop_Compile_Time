@@ -4,14 +4,27 @@
 
 enum EnumTest : int
 {
-	A, B, C, D, E, F, G, H, I, J, K, L, M, N
+	A = 0, 
+	B, 
+	C, 
+	D, 
+	E, 
+	F, 
+	G, 
+	H, 
+	I, 
+	J, 
+	K, 
+	L, 
+	M, 
+	N
 };
 
 
 template <EnumTest value>
 void Function()
 {
-	//~~~~~~~~~~~~~~
+	std::cout << static_cast<int>(value) << std::endl;
 }
 
 // Loop Job Functor must have non type template argument to get Loop Variable value at compile time
@@ -27,7 +40,15 @@ struct LoopJobFunctor
 
 int main()
 {
-	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::N, 1, LoopJobFunctor>();
+	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::N, eCondition_OperatorType::SmallerThan, 1, LoopJobFunctor>();
+	std::cout << std::endl;
+	std::cout << std::endl;
+
+	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::N, EnumTest::B, eCondition_OperatorType::BiggerThan, -1, LoopJobFunctor>();
+	std::cout << std::endl;
+	std::cout << std::endl;
+
+	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::N, EnumTest::B, eCondition_OperatorType::BIggerThanOrEqual, -1, LoopJobFunctor>();
 
 	/*
 

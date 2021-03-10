@@ -11,6 +11,16 @@ using if_rvalue_reference_change_to_lvalue_reference = std::conditional_t<!std::
 
 #include <iostream>
 
+enum class eCondition_OperatorType
+{
+	Eqaul,
+	NotEqual,
+	SmallerThan,
+	SmallerThanOrEqual,
+	BiggerThan,
+	BIggerThanOrEqual
+};
+
 /// <summary>
 /// if Loop variable is integer type
 /// loop from start(inclusive) to end(inclusive)
@@ -18,7 +28,7 @@ using if_rvalue_reference_change_to_lvalue_reference = std::conditional_t<!std::
 template <typename LoopVariableType>
 struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_integral_v<LoopVariableType>> >
 {
-	template <LoopVariableType start, LoopVariableType end, LoopVariableType increment, template<LoopVariableType> typename Functor, typename... Args, std::enable_if_t<start <= end, bool> = true >
+	template <LoopVariableType start, LoopVariableType condition, eCondition_OperatorType condition_operator_type, LoopVariableType increment, template<LoopVariableType> typename Functor, typename... Args>
 	static void Loop(Args&&... args)
 	{
 		// TODO : Support rvalue reference, 
@@ -33,10 +43,19 @@ struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_i
 
 		Functor<start>()(std::forward<Args>(args)...);
 
-		if constexpr (start + increment <= end)
+
+		if constexpr (
+			(condition_operator_type == eCondition_OperatorType::Eqaul && start + increment == condition) ||
+			(condition_operator_type == eCondition_OperatorType::NotEqual && start + increment != condition) ||
+			(condition_operator_type == eCondition_OperatorType::SmallerThan && start + increment < condition) ||
+			(condition_operator_type == eCondition_OperatorType::SmallerThanOrEqual && start + increment <= condition) ||
+			(condition_operator_type == eCondition_OperatorType::BiggerThan && start + increment > condition) ||
+			(condition_operator_type == eCondition_OperatorType::BIggerThanOrEqual && start + increment >= condition)
+		)
 		{
-			Loop<start + increment, end, increment, Functor>(std::forward<Args>(args)...);
+			Loop<start + increment, condition, condition_operator_type, increment, Functor>(std::forward<Args>(args)...);
 		}
+
 	}
 };
 
@@ -51,15 +70,23 @@ struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_e
 {
 	using enum_underlying_type = std::underlying_type_t<LoopVariableType>;
 
-	template <LoopVariableType start, LoopVariableType end, typename enum_underlying_type increment, template<LoopVariableType> typename Functor, typename... Args, std::enable_if_t<start <= end, bool> = true >
+	template <LoopVariableType start, LoopVariableType condition, eCondition_OperatorType condition_operator_type, typename enum_underlying_type increment, template<LoopVariableType> typename Functor, typename... Args>
 	static void Loop(Args&&... args)
 	{
 		
 		Functor<start>()(std::forward<Args>(args)...);
 
-		if constexpr (static_cast<enum_underlying_type>(start) + increment <= static_cast<enum_underlying_type>(end))
+		if constexpr (
+			(condition_operator_type == eCondition_OperatorType::Eqaul && static_cast<enum_underlying_type>(start) + increment == static_cast<enum_underlying_type>(condition)) ||
+			(condition_operator_type == eCondition_OperatorType::NotEqual && static_cast<enum_underlying_type>(start) + increment != static_cast<enum_underlying_type>(condition)) ||
+			(condition_operator_type == eCondition_OperatorType::SmallerThan && static_cast<enum_underlying_type>(start) + increment < static_cast<enum_underlying_type>(condition)) ||
+			(condition_operator_type == eCondition_OperatorType::SmallerThanOrEqual && static_cast<enum_underlying_type>(start) + increment <= static_cast<enum_underlying_type>(condition)) ||
+			(condition_operator_type == eCondition_OperatorType::SmallerThanOrEqual && static_cast<enum_underlying_type>(start) + increment <= static_cast<enum_underlying_type>(condition)) ||
+			(condition_operator_type == eCondition_OperatorType::BiggerThan && static_cast<enum_underlying_type>(start) + increment > static_cast<enum_underlying_type>(condition)) ||
+			(condition_operator_type == eCondition_OperatorType::BIggerThanOrEqual && static_cast<enum_underlying_type>(start) + increment >= static_cast<enum_underlying_type>(condition))
+			)
 		{
-			Loop<static_cast<LoopVariableType>(static_cast<enum_underlying_type>(start) + increment), end, increment, Functor>(std::forward<Args>(args)...);
+			Loop<static_cast<LoopVariableType>(static_cast<enum_underlying_type>(start) + increment), condition, condition_operator_type, increment, Functor>(std::forward<Args>(args)...);
 		}
 	}
 };
