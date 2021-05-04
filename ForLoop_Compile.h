@@ -29,8 +29,10 @@ template <typename LoopVariableType>
 struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_integral_v<LoopVariableType>> >
 {
 	template <LoopVariableType start, LoopVariableType condition, eCondition_OperatorType condition_operator_type, LoopVariableType increment, template<LoopVariableType> typename Functor, typename... Args>
-	static void Loop(Args&&... args)
+	static void Loop(Args&... args)
 	{
+		static_assert(!std::is_rvalue_reference_v<Args>...);
+
 		// TODO : Support rvalue reference, 
 		// First, make object through move sement with passed rvalue reference in First Loop Function
 		// Second, pass maked object to Functor
@@ -71,9 +73,10 @@ struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_e
 	using enum_underlying_type = std::underlying_type_t<LoopVariableType>;
 
 	template <LoopVariableType start, LoopVariableType condition, eCondition_OperatorType condition_operator_type, typename enum_underlying_type increment, template<LoopVariableType> typename Functor, typename... Args>
-	static void Loop(Args&&... args)
+	static void Loop(Args&... args)
 	{
-		
+		static_assert(!std::is_rvalue_reference_v<Args>...);
+
 		Functor<start>()(std::forward<Args>(args)...);
 
 		if constexpr (

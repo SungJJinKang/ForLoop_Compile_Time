@@ -20,9 +20,13 @@ enum EnumTest : int
 	N
 };
 
+class TempStruct
+{
+	float a, b, c;
+};
 
 template <EnumTest value>
-void Function()
+void Function(const TempStruct& tempStruct)
 {
 	std::cout << static_cast<int>(value) << std::endl;
 }
@@ -32,23 +36,26 @@ void Function()
 template<EnumTest enumValue>
 struct LoopJobFunctor
 {
-	constexpr void operator()()
+	constexpr void operator()(const TempStruct& tempStruct)
 	{
-		Function<enumValue>();
+		Function<enumValue>(tempStruct);
 	}
 };
 
 int main()
 {
-	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::N, eCondition_OperatorType::SmallerThan, 1, LoopJobFunctor>();
+	TempStruct tmp;
+
+	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::N, eCondition_OperatorType::SmallerThan, 1, LoopJobFunctor>(tmp);
 	std::cout << std::endl;
 	std::cout << std::endl;
 
-	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::N, EnumTest::B, eCondition_OperatorType::BiggerThan, -1, LoopJobFunctor>();
+	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::N, EnumTest::B, eCondition_OperatorType::BiggerThan, -1, LoopJobFunctor>(tmp);
 	std::cout << std::endl;
 	std::cout << std::endl;
 
-	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::N, EnumTest::B, eCondition_OperatorType::BIggerThanOrEqual, -1, LoopJobFunctor>();
+	//Dont Pass rvalue as argument 
+	//ForLoop_CompileTime<EnumTest>::Loop<EnumTest::N, EnumTest::B, eCondition_OperatorType::BIggerThanOrEqual, -1, LoopJobFunctor>(std::move(tmp));
 
 	/*
 
