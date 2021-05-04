@@ -7,6 +7,8 @@ And Support using enum value as iterate value.
 
 You can evaluate loop variable at compile time!!        
 
+[한국어 블로그](https://sungjjinkang.github.io/c++/2021/01/23/_ForLoopAtCompileTime.html)     
+
 ## Feature
   * C++ 17
   * Easy Use
@@ -51,13 +53,22 @@ void Function()
 }
 
 template<>
-void Function<EnumTest::B>(){}
+void Function<EnumTest::B>()
+{
+	~~~~~~~
+}
 
 template<>
-void Function<EnumTest::I>(){}
+void Function<EnumTest::I>()
+{
+	~~~~~~~
+}
 
 template<>
-void Function<EnumTest::O>(){}
+void Function<EnumTest::O>()
+{
+	~~~~~~~
+}
 
 // Loop Job Functor must have non type template argument to get Loop Variable value at compile time
 // And type of non type template argument should equal to Template argument of ForLoop_CompileTime
@@ -122,6 +133,6 @@ struct LoopJobFunctor
 
 int main()
 {
-	ForLoop_CompileTime<int>::Loop<0, 20, 2, LoopJobFunctor>();
+	ForLoop_CompileTime<int>::Loop<0, 20, eCondition_OperatorType::SmallerThanOrEqual, 2, LoopJobFunctor>();
 }
 ```
