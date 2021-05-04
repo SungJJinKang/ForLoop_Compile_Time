@@ -29,19 +29,9 @@ template <typename LoopVariableType>
 struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_integral_v<LoopVariableType>> >
 {
 	template <LoopVariableType start, LoopVariableType condition, eConditionType condition_operator_type, LoopVariableType increment, template<LoopVariableType> typename Functor, typename... Args>
-	static void Loop(Args&... args)
+	static void Loop(Args&&... args)
 	{
-		static_assert(!std::is_rvalue_reference_v<Args>...);
-
-		// TODO : Support rvalue reference, 
-		// First, make object through move sement with passed rvalue reference in First Loop Function
-		// Second, pass maked object to Functor
-		// Third, pass maked object to next loop as lvalue reference
-		// 
-		// for Looping, just one object will be used through lvalue reference
-		//
-		// use decltype to find check rvalue reference
-		// 
+		static_assert((std::is_lvalue_reference_v<Args> && ...), "Passing r-value reference is forbidden");
 
 		Functor<start>()(std::forward<Args>(args)...);
 
@@ -73,9 +63,9 @@ struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_e
 	using enum_underlying_type = std::underlying_type_t<LoopVariableType>;
 
 	template <LoopVariableType start, LoopVariableType condition, eConditionType condition_operator_type, typename enum_underlying_type increment, template<LoopVariableType> typename Functor, typename... Args>
-	static void Loop(Args&... args)
+	static void Loop(Args&&... args)
 	{
-		static_assert(!std::is_rvalue_reference_v<Args>...);
+		static_assert( (std::is_lvalue_reference_v<Args> && ...) , "Passing r-value reference is forbidden");
 
 		Functor<start>()(std::forward<Args>(args)...);
 
@@ -83,7 +73,6 @@ struct ForLoop_CompileTime<typename LoopVariableType, std::enable_if_t<std::is_e
 			(condition_operator_type == eConditionType::EQ && static_cast<enum_underlying_type>(start) + increment == static_cast<enum_underlying_type>(condition)) ||
 			(condition_operator_type == eConditionType::NEQ && static_cast<enum_underlying_type>(start) + increment != static_cast<enum_underlying_type>(condition)) ||
 			(condition_operator_type == eConditionType::LT && static_cast<enum_underlying_type>(start) + increment < static_cast<enum_underlying_type>(condition)) ||
-			(condition_operator_type == eConditionType::LE && static_cast<enum_underlying_type>(start) + increment <= static_cast<enum_underlying_type>(condition)) ||
 			(condition_operator_type == eConditionType::LE && static_cast<enum_underlying_type>(start) + increment <= static_cast<enum_underlying_type>(condition)) ||
 			(condition_operator_type == eConditionType::GT && static_cast<enum_underlying_type>(start) + increment > static_cast<enum_underlying_type>(condition)) ||
 			(condition_operator_type == eConditionType::GE && static_cast<enum_underlying_type>(start) + increment >= static_cast<enum_underlying_type>(condition))
