@@ -27,12 +27,12 @@ Use ForLoop_CompileTime<EnumTest>::Loop<Loop Start (inclusive), Loop End (inclus
 ```
 Condition operator types ( eCondition_OperatorType ) :         
 
-Eqaul,     
-NotEqual,    
-SmallerThan,     
-SmallerThanOrEqual,     
-BiggerThan,      
-BIggerThanOrEqual      
+EQ,  (Equal)      
+NEQ, (Not Equal)          
+LT,  (Less Than)         
+LE,  (Less or Equal)          
+GT,  (Greater than)        
+GE	 (Greater or Equal)           
 ```
 	
 You can use only integer point and enum (enum class) as Loop variable type ( floating type isn't supported on C++17, maybe C++20 support this)     
@@ -85,7 +85,7 @@ struct LoopJobFunctor
 int main()
 {
 	//ForLoop_CompileTime<EnumTest>::Loop<Loop Start (inclusive), Loop End (inclusive), eCondition_OperatorType ( condition operator type ), Increment Value, LoopJobFunctor>();
-	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::N, eCondition_OperatorType::SmallerThanOrEqual, 1, LoopJobFunctor>();
+	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::N, eCondition_OperatorType::LE, 1, LoopJobFunctor>();
 	
 	/* 
 	
@@ -133,6 +133,6 @@ struct LoopJobFunctor
 
 int main()
 {
-	ForLoop_CompileTime<int>::Loop<0, 20, eCondition_OperatorType::SmallerThanOrEqual, 2, LoopJobFunctor>();
+	ForLoop_CompileTime<int>::Loop<0, 20, eCondition_OperatorType::LE, 2, LoopJobFunctor>();
 }
 ```

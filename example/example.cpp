@@ -46,16 +46,16 @@ int main()
 {
 	TempStruct tmp;
 
-	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::N, eCondition_OperatorType::SmallerThan, 1, LoopJobFunctor>(tmp);
+	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::A, EnumTest::N, eConditionType::LT, 1, LoopJobFunctor>(tmp);
 	std::cout << std::endl;
 	std::cout << std::endl;
 
-	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::N, EnumTest::B, eCondition_OperatorType::BiggerThan, -1, LoopJobFunctor>(tmp);
+	ForLoop_CompileTime<EnumTest>::Loop<EnumTest::N, EnumTest::B, eConditionType::GT, -1, LoopJobFunctor>(tmp);
 	std::cout << std::endl;
 	std::cout << std::endl;
 
 	//Dont Pass rvalue as argument 
-	//ForLoop_CompileTime<EnumTest>::Loop<EnumTest::N, EnumTest::B, eCondition_OperatorType::BIggerThanOrEqual, -1, LoopJobFunctor>(std::move(tmp));
+	//ForLoop_CompileTime<EnumTest>::Loop<EnumTest::N, EnumTest::B, eConditionType::GE, -1, LoopJobFunctor>(std::move(tmp));
 
 	/*
 
